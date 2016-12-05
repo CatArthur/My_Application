@@ -1,5 +1,6 @@
 package com.example.student1.myapplication;
 
+import android.content.Intent;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -65,5 +66,18 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        Button btc=(Button)findViewById(R.id.btCheat);
+        btc.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i=new Intent(MainActivity.this,Main2Activity.class);
+                i.putExtra("question",qu[pos[0]%qu.length].geta());
+                i.putExtra("answer",qu[pos[0]%qu.length].geta());
+                startActivity(i);
+            }
+        });
+
+    }
+    protected void Check(Question q, boolean f, String out){
     }
 }
