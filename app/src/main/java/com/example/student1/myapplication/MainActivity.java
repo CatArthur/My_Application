@@ -16,23 +16,32 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        final int[] pos = {0};
+
+        final Intent j=getIntent();
+        final int pos[]={j.getIntExtra("pos",0)};
+
         final Question[] qu={new Question(true,"2X2=4?"),
                 new Question(false,"3+3X3=18?"),
                 new Question(true,"4X6=3X8?"),
                 new Question(false,"144/12=11?"),
                 new Question(true, "You win?")};
+        final boolean ch[];
+        if(j.hasExtra("ch"))
+            ch = j.getBooleanArrayExtra("ch");
+        else
+            ch = new boolean[qu.length];
+        ch[pos[0]%ch.length]=j.getBooleanExtra("cheat",false);
         final TextView tw=(TextView)findViewById(R.id.quest);
-        tw.setText(qu[pos[0]%qu.length].geta());
-
+        final Intent i=new Intent(MainActivity.this,Main2Activity.class);
         Button btnT= (Button)findViewById(R.id.btT);
+        tw.setText(qu[pos[0]%qu.length].geta());
         btnT.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(qu[pos[0]%qu.length].getb())
-                    Toast.makeText(MainActivity.this, "You win", Toast.LENGTH_SHORT).show();
+                if(ch[pos[0]%ch.length])
+                    Toast.makeText(MainActivity.this, "You cheat", Toast.LENGTH_SHORT).show();
                 else
-                    Toast.makeText(MainActivity.this, "You lose", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, Check(qu[pos[0]%qu.length],true), Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -40,10 +49,10 @@ public class MainActivity extends AppCompatActivity {
         btnF.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(qu[pos[0]%qu.length].getb())
-                    Toast.makeText(MainActivity.this, "You lose", Toast.LENGTH_SHORT).show();
+                if(ch[pos[0]%ch.length])
+                    Toast.makeText(MainActivity.this, "You cheat", Toast.LENGTH_SHORT).show();
                 else
-                    Toast.makeText(MainActivity.this, "You win", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, Check(qu[pos[0]%qu.length],false), Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -70,14 +79,19 @@ public class MainActivity extends AppCompatActivity {
         btc.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent i=new Intent(MainActivity.this,Main2Activity.class);
+                i.putExtra("ch",ch);
+                i.putExtra("pos",pos[0]%qu.length);
                 i.putExtra("question",qu[pos[0]%qu.length].geta());
-                i.putExtra("answer",qu[pos[0]%qu.length].geta());
+                i.putExtra("answer",qu[pos[0]%qu.length].getb());
                 startActivity(i);
             }
         });
 
     }
-    protected void Check(Question q, boolean f, String out){
+
+
+    String Check(Question q, boolean f){
+        return (f==q.getb()?"You win":"You lose");
     }
+
 }
